@@ -1,10 +1,12 @@
-import { Component } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 import { AiOutlineMessage } from 'solid-icons/ai';
 import { FaRegularHeart, FaRegularImage } from 'solid-icons/fa';
 import { FiTrash } from 'solid-icons/fi';
 import MainLayout from './components/layouts/MainLayout';
 
 const App: Component = () => {
+  const [content, setContent] = createSignal('no');
+
   return (
     <MainLayout>
       {/* HOME PAGE START */}
@@ -21,6 +23,7 @@ const App: Component = () => {
         <div class="flex-it flex-grow">
           <div class="flex-it">
             <textarea
+              onInput={(e) => setContent(e.currentTarget.value)}
               name="content"
               rows="1"
               id="glide"
