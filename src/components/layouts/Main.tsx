@@ -1,8 +1,8 @@
-import { ParentComponent } from 'solid-js';
-import MainSidebar from '../sidebars/MainSidebar';
-import TrendsSidebar from '../sidebars/TrendsSidebar';
+import { ParentComponent } from "solid-js";
+import MainSidebar from "../sidebars/Main";
+import TrendsSidebar from "../sidebars/Trends";
 
-const MainLayout: ParentComponent = ({ children }) => {
+const MainLayout: ParentComponent = (props) => {
   return (
     <div class="w-full h-full bg-gray-900 text-gray-100">
       <div class="flex h-full min-h-252">
@@ -17,7 +17,7 @@ const MainLayout: ParentComponent = ({ children }) => {
                       Home
                     </div>
                   </div>
-                  {children}
+                  {props.children}
                 </div>
                 <div class="flex-it md:w-92 w-0 mt-4">
                   <TrendsSidebar />
