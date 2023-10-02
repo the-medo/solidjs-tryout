@@ -1,7 +1,27 @@
-import { A } from "@solidjs/router";
-import { Component } from "solid-js";
+import { A } from '@solidjs/router';
+import { Component, createSignal, JSX } from 'solid-js';
+import { GInputEvent, RegisterForm } from '../types/Form';
+import { createStore } from 'solid-js/store';
 
 const RegisterScreen: Component = () => {
+  const [form, setForm] = createStore<RegisterForm>({
+    fullName: '',
+    nickName: '',
+    email: '',
+    avatar: '',
+    password: '',
+    passwordConfirmation: '',
+  });
+
+  const setValue = (e: GInputEvent) => {
+    const { name, value } = e.currentTarget;
+    setForm(name as keyof RegisterForm, value);
+  };
+
+  const submitForm = () => {
+    console.log(form);
+  };
+
   return (
     <div class="flex-it justify-center items-center h-full">
       <div class="text-white text-4xl font-bold">Glider - Create Account</div>
@@ -12,10 +32,9 @@ const RegisterScreen: Component = () => {
               <div class="flex-it">
                 <div class="flex-it">
                   <div class="flex-it py-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Full Name
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Full Name</label>
                     <input
+                      onInput={setValue}
                       type="text"
                       name="fullName"
                       id="fullName"
@@ -27,10 +46,9 @@ const RegisterScreen: Component = () => {
                   </div>
 
                   <div class="flex-it py-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Nick Name
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Nick Name</label>
                     <input
+                      onInput={setValue}
                       type="text"
                       name="nickName"
                       id="nickName"
@@ -39,10 +57,9 @@ const RegisterScreen: Component = () => {
                   </div>
 
                   <div class="flex-it py-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Email
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
                     <input
+                      onInput={setValue}
                       type="text"
                       name="email"
                       id="email"
@@ -51,10 +68,9 @@ const RegisterScreen: Component = () => {
                   </div>
 
                   <div class="flex-it py-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Avatar
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Avatar</label>
                     <input
+                      onInput={setValue}
                       type="text"
                       name="avatar"
                       id="avatar"
@@ -63,10 +79,9 @@ const RegisterScreen: Component = () => {
                   </div>
 
                   <div class="flex-it py-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Password
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
                     <input
+                      onInput={setValue}
                       type="password"
                       name="password"
                       id="password"
@@ -79,6 +94,7 @@ const RegisterScreen: Component = () => {
                       Password Confirmation
                     </label>
                     <input
+                      onInput={setValue}
                       type="password"
                       name="passwordConfirmation"
                       id="passwordConfirmation"
@@ -88,7 +104,7 @@ const RegisterScreen: Component = () => {
                 </div>
               </div>
               <div class="text-sm text-gray-600 pb-4">
-                Already Registered?{" "}
+                Already Registered?{' '}
                 <A class="underline" href="/login">
                   Go to Login
                 </A>
