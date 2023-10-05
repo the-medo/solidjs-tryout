@@ -1,10 +1,10 @@
 import { A } from '@solidjs/router';
-import { Component, createSignal, JSX } from 'solid-js';
-import { GInputEvent, RegisterForm } from '../types/Form';
-import { createStore } from 'solid-js/store';
+import { Component } from 'solid-js';
+import useForm from '../hooks/useForm';
+import { RegisterForm } from '../types/Form';
 
 const RegisterScreen: Component = () => {
-  const [form, setForm] = createStore<RegisterForm>({
+  const { handleInput, submitForm } = useForm<RegisterForm>({
     fullName: '',
     nickName: '',
     email: '',
@@ -13,12 +13,7 @@ const RegisterScreen: Component = () => {
     passwordConfirmation: '',
   });
 
-  const setValue = (e: GInputEvent) => {
-    const { name, value } = e.currentTarget;
-    setForm(name as keyof RegisterForm, value);
-  };
-
-  const submitForm = () => {
+  const onFormSubmit = (form: RegisterForm) => {
     console.log(form);
   };
 
@@ -34,7 +29,7 @@ const RegisterScreen: Component = () => {
                   <div class="flex-it py-2">
                     <label class="block text-sm font-medium text-gray-700">Full Name</label>
                     <input
-                      onInput={setValue}
+                      onInput={handleInput}
                       type="text"
                       name="fullName"
                       id="fullName"
@@ -48,7 +43,7 @@ const RegisterScreen: Component = () => {
                   <div class="flex-it py-2">
                     <label class="block text-sm font-medium text-gray-700">Nick Name</label>
                     <input
-                      onInput={setValue}
+                      onInput={handleInput}
                       type="text"
                       name="nickName"
                       id="nickName"
@@ -59,7 +54,7 @@ const RegisterScreen: Component = () => {
                   <div class="flex-it py-2">
                     <label class="block text-sm font-medium text-gray-700">Email</label>
                     <input
-                      onInput={setValue}
+                      onInput={handleInput}
                       type="text"
                       name="email"
                       id="email"
@@ -70,7 +65,7 @@ const RegisterScreen: Component = () => {
                   <div class="flex-it py-2">
                     <label class="block text-sm font-medium text-gray-700">Avatar</label>
                     <input
-                      onInput={setValue}
+                      onInput={handleInput}
                       type="text"
                       name="avatar"
                       id="avatar"
@@ -81,7 +76,7 @@ const RegisterScreen: Component = () => {
                   <div class="flex-it py-2">
                     <label class="block text-sm font-medium text-gray-700">Password</label>
                     <input
-                      onInput={setValue}
+                      onInput={handleInput}
                       type="password"
                       name="password"
                       id="password"
@@ -94,7 +89,7 @@ const RegisterScreen: Component = () => {
                       Password Confirmation
                     </label>
                     <input
-                      onInput={setValue}
+                      onInput={handleInput}
                       type="password"
                       name="passwordConfirmation"
                       id="passwordConfirmation"
@@ -111,6 +106,7 @@ const RegisterScreen: Component = () => {
               </div>
               <div class="flex-it py-2">
                 <button
+                  onClick={submitForm(onFormSubmit)}
                   type="button"
                   class="
                   bg-blue-400 hover:bg-blue-500 focus:ring-0
