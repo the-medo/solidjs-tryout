@@ -176,3 +176,8 @@ body {
 .no-scroll {
     overflow: hidden;
 }
+
+svg {
+    color: currentColor;
+    fill: currentColor;
+}

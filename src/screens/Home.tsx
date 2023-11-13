@@ -1,29 +1,38 @@
-import { Component, createSignal, createUniqueId, For, onCleanup, onMount } from "solid-js";
-import { FaRegularImage } from "solid-icons/fa";
-import MainLayout from "../components/layouts/Main";
-import GlidePost from "../components/glides/GlidePost";
-import { Glide } from "../types/Glide";
+import { Component, createSignal, createUniqueId, For, onCleanup, onMount } from 'solid-js';
+import { FaRegularImage } from 'solid-icons/fa';
+import MainLayout from '../components/layouts/Main';
+import GlidePost from '../components/glides/GlidePost';
+import { Glide } from '../types/Glide';
+import { createStore, produce } from 'solid-js/store';
 
 const HomeScreen: Component = () => {
-  const [content, setContent] = createSignal("");
-  const [glides, setGlides] = createSignal<Glide[]>([]);
+  const [content, setContent] = createSignal('');
+  const [glides, setGlides] = createStore({
+    items: [] as Glide[],
+  });
 
   const createGlide = () => {
     const glide = {
       id: createUniqueId(),
       content: content(),
       user: {
-        nickName: "Medo",
-        avatar: "https://www.pinclipart.com/picdir/middle/133-1331433_free-user-avatar-icons-happy-flat-design-png.png"
+        nickName: 'Medo',
+        avatar:
+          'https://avatars.githubusercontent.com/u/8963255?s=400&u=00e7ffc41788f82dc82c2cf103f834dd3d219091&v=4',
       },
       likesCount: 0,
       subglidesCount: 0,
-      date: new Date()
-    }
+      date: new Date(),
+    };
 
-    setGlides([glide, ...glides()]);
-    setContent("");
-  }
+    setGlides(
+      'items',
+      produce((items) => {
+        items.unshift(glide);
+      }),
+    );
+    setContent('');
+  };
 
   return (
     <MainLayout>
@@ -33,7 +42,7 @@ const HomeScreen: Component = () => {
           <div class="w-12 h-12 overflow-visible cursor-pointer transition duration-200 hover:opacity-80">
             <img
               class="rounded-full"
-              src="https://www.pinclipart.com/picdir/middle/133-1331433_free-user-avatar-icons-happy-flat-design-png.png"
+              src="https://avatars.githubusercontent.com/u/8963255?s=400&u=00e7ffc41788f82dc82c2cf103f834dd3d219091&v=4"
             ></img>
           </div>
         </div>
@@ -77,11 +86,7 @@ const HomeScreen: Component = () => {
         {/* MESSENGER END */}
       </div>
       <div class="h-px bg-gray-700 my-1" />
-      <For each={glides()}>
-        { (glide) =>
-          <GlidePost glide={glide} />
-        }
-      </For>
+      <For each={glides.items}>{(glide) => <GlidePost glide={glide} />}</For>
       {/* HOME PAGE END */}
     </MainLayout>
   );

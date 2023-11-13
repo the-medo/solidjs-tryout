@@ -1,8 +1,7 @@
-import { A } from "@solidjs/router";
-import { Component } from "solid-js";
+import { A } from '@solidjs/router';
+import { Component } from 'solid-js';
 
 const LoginScreen: Component = () => {
-  
   return (
     <div class="flex-it justify-center items-center h-full">
       <div class="text-white text-4xl font-bold">Glider - Get In</div>
@@ -13,9 +12,7 @@ const LoginScreen: Component = () => {
               <div class="flex-it">
                 <div class="flex-it">
                   <div class="flex-it py-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Email
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
                     <input
                       type="email"
                       name="email"
@@ -27,9 +24,7 @@ const LoginScreen: Component = () => {
                     </div>
                   </div>
                   <div class="flex-it py-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Password
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
                     <input
                       type="password"
                       name="password"
@@ -40,8 +35,8 @@ const LoginScreen: Component = () => {
                 </div>
               </div>
               <div class="text-sm text-gray-600 pb-4">
-                No Account Yet?{" "}
-                <A class="underline" href="/register">
+                No Account Yet?{' '}
+                <A class="underline" href="/auth/register">
                   Create a new account
                 </A>
               </div>

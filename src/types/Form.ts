@@ -4,6 +4,7 @@ export type GInputEvent = InputEvent & {
 };
 
 export type Form = { [key: string]: string };
+export type FormErrors = { [key: string]: string[] };
 
 export type AuthForm = {
   email: string;

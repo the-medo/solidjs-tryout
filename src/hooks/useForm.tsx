@@ -1,6 +1,16 @@
-import { Accessor, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
-import { createStore } from 'solid-js/store';
-import { Form, GInputEvent, RegisterForm, SubmitCallback } from '../types/Form';
+import {
+  Accessor,
+  Component,
+  For,
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+  ParentComponent,
+  Show,
+} from 'solid-js';
+import { createStore, produce } from 'solid-js/store';
+import { Form, FormErrors, GInputEvent, RegisterForm, SubmitCallback } from '../types/Form';
 
 declare module 'solid-js' {
   namespace JSX {
@@ -24,9 +34,21 @@ export const firstUppercaseLetterValidator: Validator = (ref: HTMLInputElement):
   return `First letter of ${ref.name} should be uppercase`;
 };
 
+export const FormError: ParentComponent = ({ children }) => {
+  const errors = () => ((children as string[]) ?? []).filter((error) => error.length > 0);
+
+  return (
+    <Show when={errors().length > 0}>
+      <div class="flex-it grow text-xs bg-red-400 text-white p-3 pl-3 mt-1 rounded-md">
+        <For each={errors()}>{(message) => <div>{message}</div>}</For>
+      </div>
+    </Show>
+  );
+};
+
 const useForm = <T extends Form>(initialForm: T) => {
   const [form, setForm] = createStore<T>(initialForm);
-  const [errors, setErrors] = createStore<Form>({});
+  const [errors, setErrors] = createStore<FormErrors>();
 
   const handleInput = (e: GInputEvent) => {
     const { name, value } = e.currentTarget;
@@ -46,9 +68,17 @@ const useForm = <T extends Form>(initialForm: T) => {
   };
 
   const checkValidity = (ref: HTMLInputElement, validators: Validator[]) => () => {
+    setErrors(ref.name, []);
+
     validators.forEach((validator) => {
-      setErrors(ref.name, validator(ref));
+      setErrors(
+        produce((errors) => {
+          errors[ref.name]?.push(validator(ref));
+        }),
+      );
     });
+
+    console.log(errors[ref.name]);
   };
 
   return {
@@ -56,6 +86,7 @@ const useForm = <T extends Form>(initialForm: T) => {
     handleInput,
     submitForm,
     validate,
+    errors,
   };
 };
 

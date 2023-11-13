@@ -1,10 +1,10 @@
-import { A } from "@solidjs/router";
-import { FiMoreHorizontal } from "solid-icons/fi";
-import { Component, For, Show } from "solid-js";
-import Popup from "../utils/Popup";
-import { links } from "./links";
-import pageSize from "../../reactive/pageSize";
-import { RiDesignQuillPenLine } from "solid-icons/ri";
+import { A } from '@solidjs/router';
+import { FiMoreHorizontal } from 'solid-icons/fi';
+import { Component, For, Show } from 'solid-js';
+import Popup from '../utils/Popup';
+import { links } from './links';
+import pageSize from '../../reactive/pageSize';
+import { RiDesignQuillPenLine } from 'solid-icons/ri';
 
 const MainSidebar: Component = () => {
   return (
@@ -21,18 +21,16 @@ const MainSidebar: Component = () => {
               <div class="my-1 w-full flex-it">
                 <nav class="flex-it items-start">
                   <For each={links}>
-                    { (link) =>
+                    {(link) => (
                       <A class="flex-it items-start flex-grow w-full" href={link.href}>
                         <div class="p-3 flex-row justify-center items-center flex-it rounded-3xl hover:bg-gray-800 hover:rounded-3xl transition duration-200">
-                          <div class="flex-it">
-                            {link.icon()}
-                          </div>
+                          <div class="flex-it">{link.icon()}</div>
                           <div class="mx-4 text-2xl truncate xl:block hidden">
                             <span class="truncate">{link.name}</span>
                           </div>
                         </div>
                       </A>
-                    }
+                    )}
                   </For>
                 </nav>
               </div>
@@ -40,10 +38,7 @@ const MainSidebar: Component = () => {
               <div class="my-1 flex-it w-10/12 cursor-pointer">
                 <div class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-full flex-it transition">
                   <div class="flex-it flex-row text-xl font-bold text-white items-start justify-center truncate duration-200">
-                    <Show 
-                      when={pageSize.isXl()}
-                      fallback={<RiDesignQuillPenLine />}
-                    >
+                    <Show when={pageSize.isXl()} fallback={<RiDesignQuillPenLine />}>
                       <div>Glide It</div>
                     </Show>
                   </div>
@@ -53,14 +48,14 @@ const MainSidebar: Component = () => {
             {/* PROFILE MENU */}
             <div class="flex-it hover:cursor-pointer">
               {/* POPUP START*/}
-              <Popup 
-                opener={() => 
+              <Popup
+                opener={() => (
                   <div class="my-3 flex-it items-center flex-row p-3 rounded-3xl hover:bg-gray-800 hover:rounded-3xl transition duration-200 cursor-pointer">
                     <div class="flex-it">
                       <div class="w-10 h-10 overflow-visible">
                         <img
                           class="rounded-full"
-                          src="https://www.pinclipart.com/picdir/middle/133-1331433_free-user-avatar-icons-happy-flat-design-png.png"
+                          src="https://avatars.githubusercontent.com/u/8963255?s=400&u=00e7ffc41788f82dc82c2cf103f834dd3d219091&v=4"
                         ></img>
                       </div>
                     </div>
@@ -70,8 +65,8 @@ const MainSidebar: Component = () => {
                         <FiMoreHorizontal />
                       </div>
                     </div>
-                  </div>  
-                }
+                  </div>
+                )}
               />
               {/* POPUP END */}
             </div>
