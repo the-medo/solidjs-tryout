@@ -4,6 +4,8 @@ import useForm, {
   firstUppercaseLetterValidator,
   FormError,
   maxLengthValidator,
+  minLengthValidator,
+  requiredValidator,
 } from '../hooks/useForm';
 import { RegisterForm } from '../types/Form';
 
@@ -21,6 +23,8 @@ const RegisterScreen: Component = () => {
     console.log(form);
   };
 
+  console.log(errors);
+
   return (
     <div class="flex-it justify-center items-center h-full">
       <div class="text-white text-4xl font-bold">Glider - Create Account</div>
@@ -34,7 +38,11 @@ const RegisterScreen: Component = () => {
                     <label class="block text-sm font-medium text-gray-700">Full Name</label>
                     <input
                       onInput={handleInput}
-                      use:validate={[maxLengthValidator, firstUppercaseLetterValidator]}
+                      use:validate={[
+                        requiredValidator,
+                        minLengthValidator,
+                        firstUppercaseLetterValidator,
+                      ]}
                       type="text"
                       name="fullName"
                       id="fullName"
@@ -47,7 +55,7 @@ const RegisterScreen: Component = () => {
                     <label class="block text-sm font-medium text-gray-700">Nick Name</label>
                     <input
                       onInput={handleInput}
-                      use:validate={[maxLengthValidator]}
+                      use:validate={[requiredValidator, (e) => minLengthValidator(e, 4)]}
                       type="text"
                       name="nickName"
                       id="nickName"
@@ -63,8 +71,10 @@ const RegisterScreen: Component = () => {
                       type="text"
                       name="email"
                       id="email"
+                      use:validate={[requiredValidator]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
+                    <FormError>{errors.email}</FormError>
                   </div>
 
                   <div class="flex-it py-2">
@@ -74,8 +84,10 @@ const RegisterScreen: Component = () => {
                       type="text"
                       name="avatar"
                       id="avatar"
+                      use:validate={[requiredValidator]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
+                    <FormError>{errors.avatar}</FormError>
                   </div>
 
                   <div class="flex-it py-2">
@@ -85,8 +97,11 @@ const RegisterScreen: Component = () => {
                       type="password"
                       name="password"
                       id="password"
+                      use:validate={[requiredValidator]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
+
+                    <FormError>{errors.password}</FormError>
                   </div>
 
                   <div class="flex-it py-2">
@@ -98,8 +113,10 @@ const RegisterScreen: Component = () => {
                       type="password"
                       name="passwordConfirmation"
                       id="passwordConfirmation"
+                      use:validate={[requiredValidator]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
+                    <FormError>{errors.passwordConfirmation}</FormError>
                   </div>
                 </div>
               </div>
