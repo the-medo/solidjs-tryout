@@ -20,55 +20,23 @@ declare module 'solid-js' {
   }
 }
 
-type Validator = (element: HTMLInputElement, ...rest: any[]) => string;
-
-export const requiredValidator: Validator = (ref: HTMLInputElement): string => {
-  const value = ref.value;
-  if (value.length > 0) return '';
-  return `${niceName(ref.name)} is required`;
-};
-
-export const minLengthValidator: Validator = (ref: HTMLInputElement, minLength = 7): string => {
-  const value = ref.value;
-  if (value.length === 0 || value.length >= minLength) return '';
-  return `${niceName(ref.name)} should be greater or equal than ${minLength} characters`;
-};
-
-export const maxLengthValidator: Validator = (ref: HTMLInputElement, maxLength = 7): string => {
-  const value = ref.value;
-  if (value.length === 0 || value.length < maxLength) return '';
-  return `${niceName(ref.name)} should be less than ${maxLength} characters`;
-};
-
-export const firstUppercaseLetterValidator: Validator = (ref: HTMLInputElement): string => {
-  const value = ref.value;
-  if (value.length === 0 || value[0].toUpperCase() === value[0]) return '';
-  return `First letter of ${niceName(ref.name)} should be uppercase`;
-};
-
-const niceName = (text: string) =>
-  text
-    .split(/(?=[A-Z])/)
-    .map((w, i) => (i === 0 ? w[0].toUpperCase() + w.substring(1) : w.toLowerCase()))
-    .join(' ');
-
-export const FormError: ParentComponent = ({ children }) => {
-  const errors = () => ((children as string[]) ?? []).filter((error) => error.length > 0);
-
-  console.log('ERRORS:', errors());
-
-  return (
-    <Show when={errors().length > 0}>
-      <div class="flex-it grow text-xs bg-red-400 text-white p-3 pl-3 mt-1 rounded-md">
-        <For each={errors()}>{(message) => <div>{message}</div>}</For>
-      </div>
-    </Show>
-  );
-};
+export type Validator = (element: HTMLInputElement, ...rest: any[]) => (form: Form) => string;
+export type ValidatorConfig = { element: HTMLInputElement; validators: Validator[] };
 
 const useForm = <T extends Form>(initialForm: T) => {
   const [form, setForm] = createStore<T>(initialForm);
   const [errors, setErrors] = createStore<FormErrors>();
+
+  const validatorFields: { [key: string]: ValidatorConfig } = {};
+
+  const isValid = () => {
+    const keys = Object.keys(errors);
+    if (keys.length === 0) {
+      return false;
+    }
+
+    return !keys.some((errorKey) => errors[errorKey].length > 0);
+  };
 
   const handleInput = (e: GInputEvent) => {
     const { name, value } = e.currentTarget;
@@ -76,33 +44,50 @@ const useForm = <T extends Form>(initialForm: T) => {
   };
 
   const submitForm = (submitCallback: SubmitCallback<T>) => () => {
-    console.log(form);
+    for (const field in validatorFields) {
+      const config = validatorFields[field];
+      checkValidity(config)();
+    }
+
+    if (isValid()) {
+      submitCallback(form);
+    }
   };
 
   const validate = (ref: HTMLInputElement, accessor: Accessor<Validator[]>) => {
     const validators = accessor() || [];
+    let config: ValidatorConfig;
+    validatorFields[ref.name] = config = { element: ref, validators };
 
-    ref.onblur = checkValidity(ref, validators);
-
-    ref.oninput = () => {};
+    ref.onblur = checkValidity(config);
+    ref.oninput = () => {
+      if (!errors[ref.name]) {
+        return;
+      }
+      checkValidity(config)();
+    };
   };
 
-  const checkValidity = (ref: HTMLInputElement, validators: Validator[]) => () => {
-    setErrors(ref.name, []);
+  const checkValidity =
+    ({ element, validators }: ValidatorConfig) =>
+    () => {
+      setErrors(element.name, []);
 
-    validators.forEach((validator) => {
-      setErrors(
-        produce((errors) => {
-          errors[ref.name]?.push(validator(ref));
-        }),
-      );
-    });
+      for (const validator of validators) {
+        const message = validator(element)(form);
+        if (!!message) {
+          setErrors(
+            produce((errors) => {
+              errors[element.name].push(message);
+            }),
+          );
+        }
+      }
 
-    console.log(JSON.stringify(errors[ref.name]));
-  };
+      console.log(JSON.stringify(errors[element.name]));
+    };
 
   return {
-    form,
     handleInput,
     submitForm,
     validate,

@@ -1,13 +1,12 @@
 import { A } from '@solidjs/router';
 import { Accessor, Component, Show } from 'solid-js';
-import useForm, {
-  firstUppercaseLetterValidator,
-  FormError,
-  maxLengthValidator,
-  minLengthValidator,
-  requiredValidator,
-} from '../hooks/useForm';
+import useForm from '../hooks/useForm';
 import { RegisterForm } from '../types/Form';
+import { requiredValidator } from '../utils/validators/requiredValidator';
+import { minLengthValidator } from '../utils/validators/minLengthValidator';
+import { firstUppercaseLetterValidator } from '../utils/validators/firstUppercaseLetterValidator';
+import { FormError } from '../components/utils/FormError';
+import { compareWithValidator } from '../utils/validators/compareWithValidator';
 
 const RegisterScreen: Component = () => {
   const { handleInput, submitForm, validate, errors } = useForm<RegisterForm>({
@@ -21,9 +20,8 @@ const RegisterScreen: Component = () => {
 
   const onFormSubmit = (form: RegisterForm) => {
     console.log(form);
+    console.log('errors', errors);
   };
-
-  console.log(errors);
 
   return (
     <div class="flex-it justify-center items-center h-full">
@@ -48,7 +46,7 @@ const RegisterScreen: Component = () => {
                       id="fullName"
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
-                    <FormError>{errors.fullName}</FormError>
+                    <FormError>{errors['fullName']}</FormError>
                   </div>
 
                   <div class="flex-it py-2">
@@ -113,7 +111,10 @@ const RegisterScreen: Component = () => {
                       type="password"
                       name="passwordConfirmation"
                       id="passwordConfirmation"
-                      use:validate={[requiredValidator]}
+                      use:validate={[
+                        requiredValidator,
+                        (ref) => compareWithValidator(ref, 'password'),
+                      ]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                     <FormError>{errors.passwordConfirmation}</FormError>
