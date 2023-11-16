@@ -1,5 +1,5 @@
 import { A } from '@solidjs/router';
-import { Accessor, Component, Show } from 'solid-js';
+import { Component, onMount } from 'solid-js';
 import useForm from '../hooks/useForm';
 import { RegisterForm } from '../types/Form';
 import { requiredValidator } from '../utils/validators/requiredValidator';
@@ -7,8 +7,11 @@ import { minLengthValidator } from '../utils/validators/minLengthValidator';
 import { firstUppercaseLetterValidator } from '../utils/validators/firstUppercaseLetterValidator';
 import { FormError } from '../components/utils/FormError';
 import { compareWithValidator } from '../utils/validators/compareWithValidator';
+import useRegister from '../hooks/useRegister';
+import { getUsers } from '../db';
 
 const RegisterScreen: Component = () => {
+  const { register } = useRegister();
   const { handleInput, submitForm, validate, errors } = useForm<RegisterForm>({
     fullName: '',
     nickName: '',
@@ -19,9 +22,15 @@ const RegisterScreen: Component = () => {
   });
 
   const onFormSubmit = (form: RegisterForm) => {
+    register(form);
     console.log(form);
     console.log('errors', errors);
   };
+
+  onMount(async () => {
+    const users = await getUsers();
+    console.log('users', users);
+  });
 
   return (
     <div class="flex-it justify-center items-center h-full">
