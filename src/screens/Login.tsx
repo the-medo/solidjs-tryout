@@ -1,7 +1,24 @@
 import { A } from '@solidjs/router';
 import { Component } from 'solid-js';
+import useForm from '../hooks/useForm';
+import { AuthForm } from '../types/Form';
+import useLogin from '../hooks/useLogin';
+import { requiredValidator } from '../utils/validators/requiredValidator';
+import { FormError } from '../components/utils/FormError';
 
 const LoginScreen: Component = () => {
+  const { loginUser } = useLogin();
+  const { handleInput, submitForm, validate, errors } = useForm<AuthForm>({
+    email: '',
+    password: '',
+  });
+
+  const onFormSubmit = (form: AuthForm) => {
+    loginUser(form);
+    console.log(form);
+    console.log('errors', errors);
+  };
+
   return (
     <div class="flex-it justify-center items-center h-full">
       <div class="text-white text-4xl font-bold">Glider - Get In</div>
@@ -14,23 +31,27 @@ const LoginScreen: Component = () => {
                   <div class="flex-it py-2">
                     <label class="block text-sm font-medium text-gray-700">Email</label>
                     <input
+                      onInput={handleInput}
+                      use:validate={[requiredValidator]}
                       type="email"
                       name="email"
                       id="email"
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
-                    <div class="flex-it grow text-xs bg-red-400 text-white p-3 pl-3 mt-1 rounded-md">
-                      Error Error Beep Beep!
-                    </div>
+                    <FormError>{errors.email}</FormError>
                   </div>
                   <div class="flex-it py-2">
                     <label class="block text-sm font-medium text-gray-700">Password</label>
                     <input
+                      onInput={handleInput}
+                      use:validate={[requiredValidator]}
                       type="password"
                       name="password"
                       id="password"
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
+
+                    <FormError>{errors.password}</FormError>
                   </div>
                 </div>
               </div>
@@ -42,6 +63,7 @@ const LoginScreen: Component = () => {
               </div>
               <div class="flex-it py-2">
                 <button
+                  onClick={submitForm(onFormSubmit)}
                   type="button"
                   class="
                   bg-blue-400 hover:bg-blue-500

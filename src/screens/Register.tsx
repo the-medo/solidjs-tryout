@@ -1,5 +1,5 @@
 import { A } from '@solidjs/router';
-import { Component, onMount } from 'solid-js';
+import { Component } from 'solid-js';
 import useForm from '../hooks/useForm';
 import { RegisterForm } from '../types/Form';
 import { requiredValidator } from '../utils/validators/requiredValidator';
@@ -8,10 +8,9 @@ import { firstUppercaseLetterValidator } from '../utils/validators/firstUppercas
 import { FormError } from '../components/utils/FormError';
 import { compareWithValidator } from '../utils/validators/compareWithValidator';
 import useRegister from '../hooks/useRegister';
-import { getUsers } from '../db';
 
 const RegisterScreen: Component = () => {
-  const { register } = useRegister();
+  const { registerUser } = useRegister();
   const { handleInput, submitForm, validate, errors } = useForm<RegisterForm>({
     fullName: '',
     nickName: '',
@@ -22,15 +21,10 @@ const RegisterScreen: Component = () => {
   });
 
   const onFormSubmit = (form: RegisterForm) => {
-    register(form);
+    registerUser(form);
     console.log(form);
     console.log('errors', errors);
   };
-
-  onMount(async () => {
-    const users = await getUsers();
-    console.log('users', users);
-  });
 
   return (
     <div class="flex-it justify-center items-center h-full">
@@ -75,10 +69,10 @@ const RegisterScreen: Component = () => {
                     <label class="block text-sm font-medium text-gray-700">Email</label>
                     <input
                       onInput={handleInput}
+                      use:validate={[requiredValidator]}
                       type="text"
                       name="email"
                       id="email"
-                      use:validate={[requiredValidator]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                     <FormError>{errors.email}</FormError>
@@ -88,10 +82,10 @@ const RegisterScreen: Component = () => {
                     <label class="block text-sm font-medium text-gray-700">Avatar</label>
                     <input
                       onInput={handleInput}
+                      use:validate={[requiredValidator]}
                       type="text"
                       name="avatar"
                       id="avatar"
-                      use:validate={[requiredValidator]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                     <FormError>{errors.avatar}</FormError>
@@ -101,10 +95,10 @@ const RegisterScreen: Component = () => {
                     <label class="block text-sm font-medium text-gray-700">Password</label>
                     <input
                       onInput={handleInput}
+                      use:validate={[requiredValidator]}
                       type="password"
                       name="password"
                       id="password"
-                      use:validate={[requiredValidator]}
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
 
@@ -132,7 +126,7 @@ const RegisterScreen: Component = () => {
               </div>
               <div class="text-sm text-gray-600 pb-4">
                 Already Registered?{' '}
-                <A class="underline" href="/login">
+                <A class="underline" href="/auth/login">
                   Go to Login
                 </A>
               </div>
