@@ -4,8 +4,12 @@ import MainLayout from '../components/layouts/Main';
 import GlidePost from '../components/glides/GlidePost';
 import { Glide } from '../types/Glide';
 import { createStore, produce } from 'solid-js/store';
+import { useAuthState } from '../context/auth';
+import { useUIDispatch } from '../context/ui';
 
 const HomeScreen: Component = () => {
+  const { user } = useAuthState()!;
+  const { addSnackbar } = useUIDispatch();
   const [content, setContent] = createSignal('');
   const [glides, setGlides] = createStore({
     items: [] as Glide[],
@@ -31,6 +35,12 @@ const HomeScreen: Component = () => {
         items.unshift(glide);
       }),
     );
+
+    addSnackbar({
+      message: content(),
+      type: 'success',
+    });
+
     setContent('');
   };
 
@@ -40,10 +50,7 @@ const HomeScreen: Component = () => {
       <div class="flex-it py-1 px-4 flex-row">
         <div class="flex-it mr-4">
           <div class="w-12 h-12 overflow-visible cursor-pointer transition duration-200 hover:opacity-80">
-            <img
-              class="rounded-full"
-              src="https://avatars.githubusercontent.com/u/8963255?s=400&u=00e7ffc41788f82dc82c2cf103f834dd3d219091&v=4"
-            ></img>
+            <img class="rounded-full" src={user?.avatar}></img>
           </div>
         </div>
         {/* MESSENGER START */}
