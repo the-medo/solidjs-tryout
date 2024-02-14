@@ -4,6 +4,7 @@ import { useAuthState } from '../context/auth';
 import { useUIDispatch, useUIState } from '../context/ui';
 import { createSignal } from 'solid-js';
 import { createGlide } from '../api/glide';
+import { FirebaseError } from 'firebase/app';
 
 const useMessenger = () => {
   const { isAuthenticated, user } = useAuthState()!;
@@ -19,7 +20,7 @@ const useMessenger = () => {
     setForm(name, value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isAuthenticated || !user) {
       addSnackbar({
         message: 'You are not authenticated',
@@ -36,12 +37,18 @@ const useMessenger = () => {
       //more data
     };
 
-    createGlide(glide);
-
-    setForm({
-      content: '',
-    });
-    setLoading(false);
+    try {
+      await createGlide(glide);
+      addSnackbar({ message: 'Glide added', type: 'success' });
+      setForm({
+        content: '',
+      });
+    } catch (error) {
+      const message = (error as FirebaseError).message;
+      addSnackbar({ message, type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
