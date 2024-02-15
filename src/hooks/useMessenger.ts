@@ -34,7 +34,6 @@ const useMessenger = () => {
     const glide = {
       ...form,
       uid: user.uid,
-      //more data
     };
 
     try {
