@@ -19,6 +19,7 @@ const getGlides = async () => {
 
   const q = query(collection(db, 'glides'), ...constraints);
   const qSnapshot = await getDocs(q);
+  const lastGlide = qSnapshot.docs[qSnapshot.docs.length - 1] ?? null;
 
   return {
     glides: await Promise.all(
@@ -31,6 +32,7 @@ const getGlides = async () => {
         return { ...glide, id: g.id };
       }),
     ),
+    lastGlide,
   };
 };
 

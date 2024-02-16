@@ -4,6 +4,7 @@ import { createSignal, onMount } from 'solid-js';
 import { getGlides } from '../api/glide';
 import { FirebaseError } from 'firebase/app';
 import { useUIDispatch } from '../context/ui';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
 
 type State = {
   pages: Record<
@@ -13,6 +14,7 @@ type State = {
     }
   >;
   loading: boolean;
+  lastGlide: QueryDocumentSnapshot | null;
 };
 
 const createInitState = (): State => ({
@@ -20,6 +22,7 @@ const createInitState = (): State => ({
     1: { glides: [] },
   },
   loading: false,
+  lastGlide: null,
 });
 
 const useGlides = () => {
@@ -36,7 +39,7 @@ const useGlides = () => {
 
     setStore('loading', true);
     try {
-      const { glides } = await getGlides();
+      const { glides, lastGlide } = await getGlides();
       if (glides.length > 0) {
         setStore(
           produce((store) => {
@@ -44,6 +47,8 @@ const useGlides = () => {
           }),
         );
       }
+
+      setStore('lastGlide', lastGlide);
     } catch (error) {
       const message = (error as FirebaseError).message;
       addSnackbar({ message, type: 'error' });
