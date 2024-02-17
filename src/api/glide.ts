@@ -8,14 +8,21 @@ import {
   limit,
   orderBy,
   query,
+  QueryConstraint,
+  QueryDocumentSnapshot,
+  startAfter,
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '../db';
 import { Glide } from '../types/Glide';
 import { User } from '../types/User';
 
-const getGlides = async () => {
-  const constraints = [orderBy('date', 'desc'), limit(10)];
+const getGlides = async (loadedLastGlide: QueryDocumentSnapshot | null) => {
+  const constraints: QueryConstraint[] = [orderBy('date', 'desc'), limit(10)];
+
+  if (!!loadedLastGlide) {
+    constraints.push(startAfter(loadedLastGlide));
+  }
 
   const q = query(collection(db, 'glides'), ...constraints);
   const qSnapshot = await getDocs(q);
@@ -32,7 +39,7 @@ const getGlides = async () => {
         return { ...glide, id: g.id };
       }),
     ),
-    lastGlide,
+    lastGlide: lastGlide,
   };
 };
 

@@ -8,6 +8,7 @@ type Props = {
   page: Accessor<number>;
   pages: Record<number, { glides: Glide[] }>;
   loading: boolean;
+  loadGlides: () => Promise<void>;
 };
 
 const PaginatedGlides: Component<Props> = (props) => {
@@ -17,7 +18,9 @@ const PaginatedGlides: Component<Props> = (props) => {
     console.log(lastItemRef.getBoundingClientRect().top, window.innerHeight);
 
     if (lastItemRef.getBoundingClientRect().top <= window.innerHeight) {
-      console.log('Loading');
+      if (!props.loading) {
+        props.loadGlides();
+      }
     }
   };
 
