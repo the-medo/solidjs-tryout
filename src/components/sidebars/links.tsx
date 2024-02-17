@@ -17,18 +17,18 @@ export const links = [
     icon: () => <CgProfile size={SIZE} />,
   },
   {
-    name: 'More',
-    href: '/more',
-    icon: () => <CgMoreO size={SIZE} />,
-  },
-  {
-    name: 'Login', // Notification
-    href: '/auth/login', // /notification
+    name: 'Notifications',
+    href: '/',
     icon: () => <IoNotificationsCircleOutline size={SIZE} />,
   },
   {
-    name: 'Register', // Discover
-    href: '/auth/register', // /discover
+    name: 'Discover', // Discover
+    href: '/', // /discover
     icon: () => <RiMapCompassDiscoverLine size={SIZE} />,
+  },
+  {
+    name: 'More',
+    href: '/',
+    icon: () => <CgMoreO size={SIZE} />,
   },
 ];
