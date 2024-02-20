@@ -11,7 +11,7 @@ const users = [
 ];
 
 const ProfileScreen: Component = () => {
-  const { users, loading } = useUsers();
+  const { users, loading, followUser } = useUsers();
   const authState = useAuthState()!;
 
   return (
@@ -52,6 +52,7 @@ const ProfileScreen: Component = () => {
                         </div>
                         <div class="flex-it w-32 mt-3 cursor-pointer">
                           <button
+                            onClick={() => followUser(user)}
                             type="button"
                             class="
                               disabled:cursor-not-allowed disabled:bg-gray-400
