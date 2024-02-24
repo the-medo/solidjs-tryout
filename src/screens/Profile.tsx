@@ -11,7 +11,7 @@ const users = [
 ];
 
 const ProfileScreen: Component = () => {
-  const { users, loading, followUser } = useUsers();
+  const { users, loading, followUser, loadingFollow } = useUsers();
   const authState = useAuthState()!;
 
   return (
@@ -54,6 +54,7 @@ const ProfileScreen: Component = () => {
                           <button
                             onClick={() => followUser(user)}
                             type="button"
+                            disabled={loadingFollow()}
                             class="
                               disabled:cursor-not-allowed disabled:bg-gray-400
                               bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-full flex-it transition duration-200"

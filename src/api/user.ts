@@ -15,7 +15,12 @@ const getUsers = async (loggedInUser: User | null) => {
   const q = query(collection(db, 'users'), where('uid', '!=', loggedInUser?.uid));
   const querySnapshot = await getDocs(q);
 
-  const users = querySnapshot.docs.map((doc) => doc.data() as User);
+  const users = querySnapshot.docs
+    .map((doc) => doc.data() as User)
+    .filter(
+      (user) =>
+        loggedInUser?.following.find((following) => following.id === user.uid) === undefined,
+    );
 
   return users;
 };

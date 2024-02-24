@@ -7,9 +7,10 @@ import { useAuthState } from '../context/auth';
 
 const useUsers = () => {
   const { user } = useAuthState()!;
+  const { addSnackbar } = useUIDispatch();
   const [users, setUsers] = createSignal<User[]>([]);
   const [loading, setLoading] = createSignal(true);
-  const { addSnackbar } = useUIDispatch();
+  const [loadingFollow, setLoadingFollow] = createSignal(false);
 
   const loadUsers = async () => {
     try {
@@ -23,9 +24,17 @@ const useUsers = () => {
     }
   };
 
-  const followUser = (followingUser: User) => {
-    api.followUser(user!.uid, followingUser.uid);
-    alert('Following done!');
+  const followUser = async (followingUser: User) => {
+    setLoadingFollow(true);
+    try {
+      await api.followUser(user!.uid, followingUser.uid);
+      addSnackbar({ message: `You started following ${followingUser.nickName}`, type: 'success' });
+    } catch (error) {
+      const message = (error as FirebaseError).message;
+      addSnackbar({ message, type: 'error' });
+    } finally {
+      setLoadingFollow(false);
+    }
   };
 
   onMount(() => {
@@ -36,6 +45,7 @@ const useUsers = () => {
     loading,
     users,
     followUser,
+    loadingFollow,
   };
 };
 
