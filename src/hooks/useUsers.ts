@@ -3,10 +3,11 @@ import { User } from '../types/User';
 import * as api from '../api/user';
 import { FirebaseError } from 'firebase/app';
 import { useUIDispatch } from '../context/ui';
-import { useAuthState } from '../context/auth';
+import { useAuthDispatch, useAuthState } from '../context/auth';
 
 const useUsers = () => {
   const { user } = useAuthState()!;
+  const { updateUser } = useAuthDispatch()!;
   const { addSnackbar } = useUIDispatch();
   const [users, setUsers] = createSignal<User[]>([]);
   const [loading, setLoading] = createSignal(true);
@@ -27,7 +28,11 @@ const useUsers = () => {
   const followUser = async (followingUser: User) => {
     setLoadingFollow(true);
     try {
-      await api.followUser(user!.uid, followingUser.uid);
+      const followingRef = await api.followUser(user!.uid, followingUser.uid);
+      updateUser({
+        followingCount: user!.followingCount + 1,
+        following: [followingRef, ...user!.following],
+      });
       addSnackbar({ message: `You started following ${followingUser.nickName}`, type: 'success' });
     } catch (error) {
       const message = (error as FirebaseError).message;
