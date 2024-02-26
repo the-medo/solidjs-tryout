@@ -28,11 +28,25 @@ const useUsers = () => {
   const followUser = async (followingUser: User) => {
     setLoadingFollow(true);
     try {
-      const followingRef = await api.followUser(user!.uid, followingUser.uid);
+      if (!user) {
+        throw new Error('You are not authenticated!');
+      }
+
+      if (user.following.find((following) => following.id === followingUser.uid)) {
+        throw new Error('You already follow this user');
+      }
+
+      const followingRef = await api.followUser(user.uid, followingUser.uid);
+
       updateUser({
-        followingCount: user!.followingCount + 1,
-        following: [followingRef, ...user!.following],
+        followingCount: user.followingCount + 1,
+        following: [followingRef, ...user.following],
       });
+
+      setUsers((_users) => {
+        return [];
+      });
+
       addSnackbar({ message: `You started following ${followingUser.nickName}`, type: 'success' });
     } catch (error) {
       const message = (error as FirebaseError).message;
