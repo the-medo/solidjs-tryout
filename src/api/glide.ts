@@ -12,13 +12,21 @@ import {
   QueryDocumentSnapshot,
   startAfter,
   Timestamp,
+  where,
 } from 'firebase/firestore';
 import { db } from '../db';
 import { Glide } from '../types/Glide';
 import { User } from '../types/User';
 
-const getGlides = async (loadedLastGlide: QueryDocumentSnapshot | null) => {
+const getGlides = async (loggedInUser: User, loadedLastGlide: QueryDocumentSnapshot | null) => {
+  const _loggedUserDoc = doc(db, 'users', loggedInUser.uid);
   const constraints: QueryConstraint[] = [orderBy('date', 'desc'), limit(10)];
+
+  if (loggedInUser.followingCount > 0) {
+    constraints.push(where('user', 'in', loggedInUser.following));
+  } else {
+    constraints.push(where('user', '==', _loggedUserDoc));
+  }
 
   if (!!loadedLastGlide) {
     constraints.push(startAfter(loadedLastGlide));

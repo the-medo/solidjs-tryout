@@ -5,6 +5,7 @@ import { getGlides } from '../api/glide';
 import { FirebaseError } from 'firebase/app';
 import { useUIDispatch } from '../context/ui';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { useAuthState } from '../context/auth';
 
 type State = {
   pages: Record<
@@ -26,6 +27,7 @@ const createInitState = (): State => ({
 });
 
 const useGlides = () => {
+  const { user } = useAuthState()!;
   const [page, setPage] = createSignal(1);
   const [store, setStore] = createStore(createInitState());
   const { addSnackbar } = useUIDispatch();
@@ -43,7 +45,7 @@ const useGlides = () => {
 
     setStore('loading', true);
     try {
-      const { glides, lastGlide } = await getGlides(store.lastGlide);
+      const { glides, lastGlide } = await getGlides(user!, store.lastGlide);
       if (glides.length > 0) {
         setStore(
           produce((store) => {

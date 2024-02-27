@@ -43,9 +43,7 @@ const useUsers = () => {
         following: [followingRef, ...user.following],
       });
 
-      setUsers((_users) => {
-        return [];
-      });
+      setUsers((_users) => [..._users.filter((u) => u.uid !== followingUser.uid)]);
 
       addSnackbar({ message: `You started following ${followingUser.nickName}`, type: 'success' });
     } catch (error) {

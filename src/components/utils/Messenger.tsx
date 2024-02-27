@@ -11,7 +11,9 @@ type Props = {
 
 const Messenger: Component<Props> = (props) => {
   const { user } = useAuthState()!;
-  const { handleInput, handleSubmit, form } = useMessenger();
+  const { handleInput, handleSubmit, form, loading } = useMessenger();
+
+  const sendDisabled = () => loading() || form.content === '';
 
   const autosize = (e: GInputEvent) => {
     const el = e.currentTarget;
@@ -57,6 +59,7 @@ const Messenger: Component<Props> = (props) => {
                 props.onGlideAdded(glide);
               }}
               type="button"
+              disabled={sendDisabled()}
               class="
                   disabled:cursor-not-allowed disabled:bg-gray-400
                   bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-full flex-it transition duration-200"
