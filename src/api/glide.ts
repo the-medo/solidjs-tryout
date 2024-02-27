@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   QueryConstraint,
@@ -51,6 +52,23 @@ const getGlides = async (loggedInUser: User, loadedLastGlide: QueryDocumentSnaps
   };
 };
 
+const subscribeToGlides = (loggedInUser: User) => {
+  const _loggedUserDoc = doc(db, 'users', loggedInUser.uid);
+  const _collection = collection(db, 'glides');
+
+  const constraints = [where('data', '>', Timestamp.now())];
+
+  if (loggedInUser.followingCount > 0) {
+    constraints.push(where('user', 'in', loggedInUser.following));
+  } else {
+    constraints.push(where('user', '==', _loggedUserDoc));
+  }
+
+  const q = query(_collection, ...constraints);
+
+  return onSnapshot(q, (querySnapshot) => {});
+};
+
 const createGlide = async (form: { content: string; uid: string }): Promise<Glide> => {
   const userRef = doc(db, 'users', form.uid);
 
@@ -71,4 +89,4 @@ const createGlide = async (form: { content: string; uid: string }): Promise<Glid
   };
 };
 
-export { getGlides, createGlide };
+export { getGlides, createGlide, subscribeToGlides };

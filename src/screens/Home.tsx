@@ -1,11 +1,20 @@
-import { Component } from 'solid-js';
+import { Component, onCleanup, onMount } from 'solid-js';
 import MainLayout from '../components/layouts/Main';
 import Messenger from '../components/utils/Messenger';
 import useGlides from '../hooks/useGlides';
 import PaginatedGlides from '../components/glides/PaginatedGlides';
 
 const HomeScreen: Component = () => {
-  const { addGlide, page, store, loadGlides } = useGlides();
+  const { addGlide, page, store, loadGlides, subscribeToGlides, unsubscribeFromGlides } =
+    useGlides();
+
+  onMount(() => {
+    subscribeToGlides();
+  });
+
+  onCleanup(() => {
+    unsubscribeFromGlides();
+  });
 
   return (
     <MainLayout pageTitle="Home">
