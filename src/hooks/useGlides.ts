@@ -16,6 +16,7 @@ type State = {
   >;
   loading: boolean;
   lastGlide: QueryDocumentSnapshot | null;
+  newGlides: Glide[];
 };
 
 const createInitState = (): State => ({
@@ -24,6 +25,7 @@ const createInitState = (): State => ({
   },
   loading: false,
   lastGlide: null,
+  newGlides: [],
 });
 
 const useGlides = () => {
@@ -70,7 +72,9 @@ const useGlides = () => {
   const subscribeToGlides = () => {
     if (!user) return;
 
-    unSubscribe = api.subscribeToGlides(user!);
+    unSubscribe = api.subscribeToGlides(user!, (newGlides: Glide[]) => {
+      setStore('newGlides', newGlides);
+    });
   };
 
   const unsubscribeFromGlides = () => {
