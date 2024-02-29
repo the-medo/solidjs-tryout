@@ -83,6 +83,11 @@ const useGlides = () => {
     }
   };
 
+  const resubscribe = () => {
+    unsubscribeFromGlides();
+    subscribeToGlides();
+  };
+
   const addGlide = (glide: Glide | undefined) => {
     if (!glide) return;
 
@@ -94,6 +99,16 @@ const useGlides = () => {
     );
   };
 
+  const displayNewGlides = () => {
+    store.newGlides.forEach((newGlide) => {
+      addGlide(newGlide);
+    });
+
+    setStore('newGlides', []);
+    resubscribe();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return {
     page,
     loadGlides,
@@ -101,6 +116,7 @@ const useGlides = () => {
     store,
     subscribeToGlides,
     unsubscribeFromGlides,
+    displayNewGlides,
   };
 };
 
