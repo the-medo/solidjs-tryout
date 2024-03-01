@@ -11,6 +11,7 @@ import {
   query,
   QueryConstraint,
   QueryDocumentSnapshot,
+  setDoc,
   startAfter,
   Timestamp,
   where,
@@ -94,9 +95,13 @@ const createGlide = async (form: { content: string; uid: string }): Promise<Glid
   const glideCollection = collection(db, 'glides');
   const added = await addDoc(glideCollection, glideToStore);
 
+  const userGlideRef = doc(userRef, 'glides', added.id);
+  await setDoc(userGlideRef, { lookup: added });
+
   return {
     ...glideToStore,
     id: added.id,
+    lookup: added.path,
   };
 };
 
