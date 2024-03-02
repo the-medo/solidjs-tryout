@@ -25,7 +25,7 @@ const getGlides = async (loggedInUser: User, loadedLastGlide: QueryDocumentSnaps
   const constraints: QueryConstraint[] = [orderBy('date', 'desc'), limit(10)];
 
   if (loggedInUser.followingCount > 0) {
-    constraints.push(where('user', 'in', loggedInUser.following));
+    constraints.push(where('user', 'in', [loggedInUser.following, _loggedUserDoc]));
   } else {
     constraints.push(where('user', '==', _loggedUserDoc));
   }
