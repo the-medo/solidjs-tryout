@@ -17,8 +17,27 @@ import {
   where,
 } from 'firebase/firestore';
 import { db } from '../db';
-import { Glide } from '../types/Glide';
+import { Glide, UserGlide } from '../types/Glide';
 import { User } from '../types/User';
+
+const getGlideById = async (id: string, uid: string) => {
+  const userDocRef = doc(db, 'users', uid);
+  const userGlideRef = doc(userDocRef, 'glides', id);
+
+  const userGlideSnap = await getDoc(userGlideRef);
+  const userGlide = userGlideSnap.data() as UserGlide;
+
+  const glideSnap = await getDoc(userGlide.lookup);
+
+  const userDocSnap = await getDoc(userDocRef);
+
+  return {
+    ...glideSnap.data(),
+    user: userDocSnap.data() as User,
+    id: glideSnap.id,
+    lookup: glideSnap.ref.path,
+  } as Glide;
+};
 
 const getGlides = async (loggedInUser: User, loadedLastGlide: QueryDocumentSnapshot | null) => {
   const _loggedUserDoc = doc(db, 'users', loggedInUser.uid);
@@ -105,4 +124,4 @@ const createGlide = async (form: { content: string; uid: string }): Promise<Glid
   };
 };
 
-export { getGlides, createGlide, subscribeToGlides };
+export { getGlides, createGlide, subscribeToGlides, getGlideById };
