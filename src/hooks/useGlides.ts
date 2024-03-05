@@ -1,21 +1,13 @@
-import { Glide } from '../types/Glide';
+import { Glide, UseGlideState } from '../types/Glide';
 import { createStore, produce } from 'solid-js/store';
 import { createSignal, onMount } from 'solid-js';
 import * as api from '../api/glide';
 import { FirebaseError } from 'firebase/app';
 import { useUIDispatch } from '../context/ui';
-import { QueryDocumentSnapshot, Unsubscribe } from 'firebase/firestore';
+import { Unsubscribe } from 'firebase/firestore';
 import { useAuthState } from '../context/auth';
 
-type State = {
-  pages: Record<
-    number,
-    {
-      glides: Glide[];
-    }
-  >;
-  loading: boolean;
-  lastGlide: QueryDocumentSnapshot | null;
+type State = UseGlideState & {
   newGlides: Glide[];
 };
 

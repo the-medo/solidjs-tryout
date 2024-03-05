@@ -72,6 +72,13 @@ const getGlides = async (loggedInUser: User, loadedLastGlide: QueryDocumentSnaps
   };
 };
 
+const getSubglides = async () => {
+  return {
+    glides: [],
+    lastGlide: null,
+  };
+};
+
 const subscribeToGlides = (loggedInUser: User, getCallback: (newGlides: Glide[]) => void) => {
   const _loggedUserDoc = doc(db, 'users', loggedInUser.uid);
   const _collection = collection(db, 'glides');
@@ -124,4 +131,4 @@ const createGlide = async (form: { content: string; uid: string }): Promise<Glid
   };
 };
 
-export { getGlides, createGlide, subscribeToGlides, getGlideById };
+export { getGlides, getSubglides, createGlide, subscribeToGlides, getGlideById };

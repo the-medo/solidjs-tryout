@@ -1,5 +1,5 @@
 import { User } from './User';
-import { DocumentReference, Timestamp } from 'firebase/firestore';
+import { DocumentReference, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
 
 export interface Glide {
   id: string;
@@ -14,4 +14,15 @@ export interface Glide {
 
 export type UserGlide = {
   lookup: DocumentReference;
+};
+
+export type UseGlideState = {
+  pages: Record<
+    number,
+    {
+      glides: Glide[];
+    }
+  >;
+  loading: boolean;
+  lastGlide: QueryDocumentSnapshot | null;
 };

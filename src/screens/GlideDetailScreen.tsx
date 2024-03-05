@@ -7,12 +7,18 @@ import { CenteredDataLoader } from '../components/utils/DataLoader';
 import { FaSolidArrowLeft } from 'solid-icons/fa';
 import Messenger from '../components/utils/Messenger';
 import { User } from '../types/User';
+import useSubglides from '../hooks/useSubglides';
 
 const GlideDetailScreen = () => {
   const params = useParams();
   const [data] = createResource(() => getGlideById(params.id, params.uid));
+  const { store, loadGlides } = useSubglides();
 
   const user = () => data()?.user as User;
+
+  onMount(() => {
+    loadGlides();
+  });
 
   return (
     <MainLayout
