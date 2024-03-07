@@ -1,6 +1,6 @@
 import MainLayout from '../components/layouts/Main';
 import { useParams } from '@solidjs/router';
-import { createResource, onMount, Show } from 'solid-js';
+import { createEffect, createResource, onMount, Show } from 'solid-js';
 import { getGlideById } from '../api/glide';
 import GlidePost from '../components/glides/GlidePost';
 import { CenteredDataLoader } from '../components/utils/DataLoader';
@@ -15,6 +15,13 @@ const GlideDetailScreen = () => {
   const { store, loadGlides } = useSubglides();
 
   const user = () => data()?.user as User;
+
+  createEffect(() => {
+    const glide = data();
+    if (!data.loading && !!glide && glide.lookup) {
+      loadGlides(glide.lookup);
+    }
+  });
 
   onMount(() => {
     loadGlides();

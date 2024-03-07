@@ -72,9 +72,29 @@ const getGlides = async (loggedInUser: User, loadedLastGlide: QueryDocumentSnaps
   };
 };
 
-const getSubglides = async () => {
+const getSubglides = async (glideLookup: string) => {
+  const ref = doc(db, glideLookup);
+  const _collection = collection(ref, 'glides');
+
+  const constraints = [orderBy('date', 'desc'), limit(10)];
+
+  const q = query(_collection, ...constraints);
+
+  const qSnapshot = await getDocs(q);
+
+  const glides = await Promise.all(
+    qSnapshot.docs.map(async (g) => {
+      const glide = g.data() as Glide;
+      const userSnap = await getDoc(glide.user as DocumentReference);
+
+      glide.user = userSnap.data() as User;
+
+      return { ...glide, id: g.id };
+    }),
+  );
+
   return {
-    glides: [],
+    glides,
     lastGlide: null,
   };
 };
