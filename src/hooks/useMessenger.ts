@@ -6,7 +6,7 @@ import { createSignal } from 'solid-js';
 import { createGlide } from '../api/glide';
 import { FirebaseError } from 'firebase/app';
 
-const useMessenger = () => {
+const useMessenger = (answerTo?: string) => {
   const { isAuthenticated, user } = useAuthState()!;
   const { addSnackbar } = useUIDispatch();
 
@@ -37,7 +37,7 @@ const useMessenger = () => {
     };
 
     try {
-      const newGlide = await createGlide(glide);
+      const newGlide = await createGlide(glide, answerTo);
       newGlide.user = user;
 
       addSnackbar({ message: 'Glide added', type: 'success' });

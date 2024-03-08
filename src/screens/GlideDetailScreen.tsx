@@ -8,11 +8,13 @@ import { FaSolidArrowLeft } from 'solid-icons/fa';
 import Messenger from '../components/utils/Messenger';
 import { User } from '../types/User';
 import useSubglides from '../hooks/useSubglides';
+import PaginatedGlides from '../components/glides/PaginatedGlides';
+import { Glide } from '../types/Glide';
 
 const GlideDetailScreen = () => {
   const params = useParams();
-  const [data] = createResource(() => getGlideById(params.id, params.uid));
-  const { store, loadGlides } = useSubglides();
+  const [data, { mutate }] = createResource(() => getGlideById(params.id, params.uid));
+  const { store, loadGlides, page, addGlide } = useSubglides();
 
   const user = () => data()?.user as User;
 
@@ -23,9 +25,16 @@ const GlideDetailScreen = () => {
     }
   });
 
-  onMount(() => {
-    loadGlides();
-  });
+  const onGlideAdded = (newGlide?: Glide) => {
+    const glide = data()!;
+
+    mutate({
+      ...glide,
+      subglidesCount: glide.subglidesCount + 1,
+    });
+
+    addGlide(newGlide);
+  };
 
   return (
     <MainLayout
@@ -44,8 +53,14 @@ const GlideDetailScreen = () => {
           <div class="text-sm italic text-gray-300 underline mb-2 ml-4">
             Answering to {user().nickName}
           </div>
-          <Messenger onGlideAdded={() => {}} showAvatar={false} />
+          <Messenger answerTo={data()?.lookup} onGlideAdded={onGlideAdded} showAvatar={false} />
         </div>
+        <PaginatedGlides
+          page={page}
+          pages={store.pages}
+          loading={store.loading}
+          loadGlides={() => Promise.resolve()}
+        />
       </Show>
     </MainLayout>
   );

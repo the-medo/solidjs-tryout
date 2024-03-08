@@ -5,6 +5,7 @@ import {
   DocumentReference,
   getDoc,
   getDocs,
+  increment,
   limit,
   onSnapshot,
   orderBy,
@@ -14,6 +15,7 @@ import {
   setDoc,
   startAfter,
   Timestamp,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { db } from '../db';
@@ -127,7 +129,23 @@ const subscribeToGlides = (loggedInUser: User, getCallback: (newGlides: Glide[])
   });
 };
 
-const createGlide = async (form: { content: string; uid: string }): Promise<Glide> => {
+const getGlideCollection = (answerTo?: string) => {
+  let glideCollection;
+
+  if (!!answerTo) {
+    const ref = doc(db, answerTo);
+    glideCollection = collection(ref, 'glides');
+  } else {
+    glideCollection = collection(db, 'glides');
+  }
+
+  return glideCollection;
+};
+
+const createGlide = async (
+  form: { content: string; uid: string },
+  answerTo?: string,
+): Promise<Glide> => {
   const userRef = doc(db, 'users', form.uid);
 
   const glideToStore = {
@@ -138,7 +156,14 @@ const createGlide = async (form: { content: string; uid: string }): Promise<Glid
     date: Timestamp.now(),
   };
 
-  const glideCollection = collection(db, 'glides');
+  if (!!answerTo) {
+    const ref = doc(db, answerTo);
+    await updateDoc(ref, {
+      subglidesCount: increment(1),
+    });
+  }
+
+  const glideCollection = getGlideCollection(answerTo);
   const added = await addDoc(glideCollection, glideToStore);
 
   const userGlideRef = doc(userRef, 'glides', added.id);

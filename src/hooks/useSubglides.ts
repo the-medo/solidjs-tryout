@@ -1,4 +1,4 @@
-import { UseGlideState } from '../types/Glide';
+import { Glide, UseGlideState } from '../types/Glide';
 import { createStore, produce } from 'solid-js/store';
 import * as api from '../api/glide';
 import { FirebaseError } from 'firebase/app';
@@ -47,7 +47,18 @@ const useSubglides = () => {
     }
   };
 
-  return { store, loadGlides };
+  const addGlide = (glide: Glide | undefined) => {
+    if (!glide) return;
+
+    const page = 1;
+    setStore(
+      produce((store) => {
+        store.pages[page].glides.unshift({ ...glide });
+      }),
+    );
+  };
+
+  return { store, loadGlides, page, addGlide };
 };
 
 export default useSubglides;

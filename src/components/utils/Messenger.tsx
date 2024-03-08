@@ -9,13 +9,14 @@ import Button from './Button';
 type Props = {
   onGlideAdded: (g: Glide | undefined) => void;
   showAvatar?: boolean;
+  answerTo?: string;
 };
 
 const Messenger: Component<Props> = (initialProps) => {
   const props = mergeProps({ showAvatar: true }, initialProps);
 
   const { user } = useAuthState()!;
-  const { handleInput, handleSubmit, form, loading } = useMessenger();
+  const { handleInput, handleSubmit, form, loading } = useMessenger(props.answerTo);
 
   const sendDisabled = () => loading() || form.content === '';
 
