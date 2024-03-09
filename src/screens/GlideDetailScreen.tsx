@@ -13,15 +13,23 @@ import { Glide } from '../types/Glide';
 
 const GlideDetailScreen = () => {
   const params = useParams();
-  const [data, { mutate }] = createResource(() => getGlideById(params.id, params.uid));
-  const { store, loadGlides, page, addGlide } = useSubglides();
 
+  const onGlideLoaded = (glide: Glide) => {
+    resetPagination();
+    loadGlides(glide.lookup!);
+  };
+
+  const [data, { mutate, refetch }] = createResource(async () => {
+    const glide = await getGlideById(params.id, params.uid);
+    onGlideLoaded(glide);
+    return glide;
+  });
+  const { store, loadGlides, page, addGlide, resetPagination } = useSubglides();
   const user = () => data()?.user as User;
 
   createEffect(() => {
-    const glide = data();
-    if (!data.loading && !!glide && glide.lookup) {
-      loadGlides(glide.lookup);
+    if (!data.loading && data()?.id !== params.id) {
+      refetch();
     }
   });
 
@@ -59,7 +67,10 @@ const GlideDetailScreen = () => {
           page={page}
           pages={store.pages}
           loading={store.loading}
-          loadGlides={() => Promise.resolve()}
+          loadGlides={() => {
+            const lookup = data()?.lookup!;
+            return loadGlides(lookup);
+          }}
         />
       </Show>
     </MainLayout>

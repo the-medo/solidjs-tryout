@@ -1,4 +1,4 @@
-import { Glide, UseGlideState } from '../types/Glide';
+import { Glide, GlidePage, UseGlideState } from '../types/Glide';
 import { createStore, produce } from 'solid-js/store';
 import * as api from '../api/glide';
 import { FirebaseError } from 'firebase/app';
@@ -27,7 +27,7 @@ const useSubglides = () => {
 
     setStore('loading', true);
     try {
-      const { glides, lastGlide } = await api.getSubglides(glideLookup);
+      const { glides, lastGlide } = await api.getSubglides(glideLookup, store.lastGlide);
       if (glides.length > 0) {
         setStore(
           produce((store) => {
@@ -58,7 +58,21 @@ const useSubglides = () => {
     );
   };
 
-  return { store, loadGlides, page, addGlide };
+  const resetPagination = () => {
+    setStore(
+      produce((store) => {
+        for (let i = 1; i <= page(); i++) {
+          store.pages[i] = { glides: [] };
+        }
+
+        store.lastGlide = null;
+      }),
+    );
+
+    setPage(1);
+  };
+
+  return { store, loadGlides, page, addGlide, resetPagination };
 };
 
 export default useSubglides;

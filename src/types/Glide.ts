@@ -16,13 +16,12 @@ export type UserGlide = {
   lookup: DocumentReference;
 };
 
+export type GlidePage = {
+  glides: Glide[];
+};
+
 export type UseGlideState = {
-  pages: Record<
-    number,
-    {
-      glides: Glide[];
-    }
-  >;
+  pages: Record<number, GlidePage>;
   loading: boolean;
   lastGlide: QueryDocumentSnapshot | null;
 };
