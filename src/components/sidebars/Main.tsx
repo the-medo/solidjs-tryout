@@ -5,11 +5,11 @@ import Popup from '../utils/Popup';
 import { links } from './links';
 import pageSize from '../../reactive/pageSize';
 import { RiDesignQuillPenLine } from 'solid-icons/ri';
-import { useAuthState } from "../../context/auth";
+import { useAuthState } from '../../context/auth';
+import Modal from '../utils/Modal';
 
 const MainSidebar: Component = () => {
-
-  const { user } = useAuthState()!
+  const { user } = useAuthState()!;
 
   return (
     <header class="lg:flex-grow flex-it items-end">
@@ -38,16 +38,25 @@ const MainSidebar: Component = () => {
                   </For>
                 </nav>
               </div>
-              {/* GLIDER SEND-MESSAGE BUTTON */}
-              <div class="my-1 flex-it w-10/12 cursor-pointer">
-                <div class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-full flex-it transition">
-                  <div class="flex-it flex-row text-xl font-bold text-white items-start justify-center truncate duration-200">
-                    <Show when={pageSize.isXl()} fallback={<RiDesignQuillPenLine />}>
-                      <div>Glide It</div>
-                    </Show>
+
+              <Modal
+                openComponent={(modalProps) => (
+                  <div
+                    class="my-1 flex-it w-10/12 cursor-pointer"
+                    onClick={() => modalProps.setOpen(true)}
+                  >
+                    <div class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-full flex-it transition">
+                      <div class="flex-it flex-row text-xl font-bold text-white items-start justify-center truncate duration-200">
+                        <Show when={pageSize.isXl()} fallback={<RiDesignQuillPenLine />}>
+                          <div>Glide It</div>
+                        </Show>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                )}
+              >
+                <div class="text-white">Modal Content!</div>
+              </Modal>
             </div>
             {/* PROFILE MENU */}
             <div class="flex-it hover:cursor-pointer">
@@ -57,10 +66,7 @@ const MainSidebar: Component = () => {
                   <div class="my-3 flex-it items-center flex-row p-3 rounded-3xl hover:bg-gray-800 hover:rounded-3xl transition duration-200 cursor-pointer">
                     <div class="flex-it">
                       <div class="w-10 h-10 overflow-visible">
-                        <img
-                          class="rounded-full"
-                          src={user?.avatar}
-                        ></img>
+                        <img class="rounded-full" src={user?.avatar}></img>
                       </div>
                     </div>
                     <div class="flex-it xl:flex hidden flex-grow flex-row justify-between items-center">
