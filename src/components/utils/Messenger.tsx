@@ -7,7 +7,7 @@ import { Component, mergeProps, Show } from 'solid-js';
 import Button from './Button';
 
 type Props = {
-  onGlideAdded: (g: Glide | undefined) => void;
+  onGlideAdded: (g?: Glide) => void;
   showAvatar?: boolean;
   answerTo?: string;
 };
