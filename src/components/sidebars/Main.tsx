@@ -62,10 +62,15 @@ const MainSidebar: Component<Props> = (props) => {
                   </div>
                 )}
               >
-                <Messenger
-                  answerTo={props.selectedGlide?.lookup}
-                  onGlideAdded={props.onGlideAdded}
-                />
+                {(modalProps) => (
+                  <Messenger
+                    answerTo={props.selectedGlide?.lookup}
+                    onGlideAdded={(glide) => {
+                      props.onGlideAdded(glide);
+                      modalProps.setOpen(false);
+                    }}
+                  />
+                )}
               </Modal>
             </div>
             {/* PROFILE MENU */}
