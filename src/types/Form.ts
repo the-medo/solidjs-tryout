@@ -1,3 +1,10 @@
+export type GFileEvent = {
+  target: Element & {
+    files?: FileList;
+  };
+  currentTarget: HTMLInputElement;
+};
+
 export type GInputEvent = InputEvent & {
   currentTarget: HTMLInputElement | HTMLTextAreaElement;
   target: HTMLInputElement | HTMLTextAreaElement;

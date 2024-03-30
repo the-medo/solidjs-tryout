@@ -1,10 +1,11 @@
 import { FaRegularImage } from 'solid-icons/fa';
 import { useAuthState } from '../../context/auth';
 import useMessenger from '../../hooks/useMessenger';
-import { GInputEvent } from '../../types/Form';
+import { GFileEvent, GInputEvent } from '../../types/Form';
 import { Glide } from '../../types/Glide';
-import { Component, mergeProps, Show } from 'solid-js';
+import { Component, JSX, mergeProps, Show } from 'solid-js';
 import Button from './Button';
+import ChangeEventHandlerUnion = JSX.ChangeEventHandlerUnion;
 
 type Props = {
   onGlideAdded: (g?: Glide) => void;
@@ -26,6 +27,26 @@ const Messenger: Component<Props> = (initialProps) => {
     el.style.height = '0px';
     const scrollHeight = el.scrollHeight;
     el.style.height = scrollHeight + 'px';
+  };
+
+  const handleImageSelection: ChangeEventHandlerUnion<HTMLInputElement, Event> = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+
+      reader.onload = () => {
+        const buffer = reader.result as ArrayBuffer;
+        const buffer8Uint = new Uint8Array(buffer);
+
+        const blob = new Blob([buffer8Uint], { type: file.type });
+        const urlCreator = window.URL || window.webkitURL;
+
+        const imageUrl = urlCreator.createObjectURL(blob);
+
+        console.log(imageUrl);
+      };
+    }
   };
 
   return (
@@ -56,7 +77,7 @@ const Messenger: Component<Props> = (initialProps) => {
           <div class="flex-it mt-3 mr-3 cursor-pointer text-white hover:text-blue-400 transition">
             <div class="upload-btn-wrapper">
               <FaRegularImage class="cursor-pointer" size={18} />
-              <input type="file" name="myfile" />
+              <input onChange={handleImageSelection} type="file" name="myfile" accept="image/*" />
             </div>
           </div>
           <div class="flex-it w-32 mt-3 cursor-pointer">
