@@ -1,15 +1,21 @@
 import { createStore } from 'solid-js/store';
-import { GInputEvent, MessengerForm } from '../types/Form';
+import { GInputEvent, MessengerForm, UploadImage } from '../types/Form';
 import { useAuthState } from '../context/auth';
-import { useUIDispatch, useUIState } from '../context/ui';
+import { useUIDispatch } from '../context/ui';
 import { createSignal } from 'solid-js';
-import { createGlide } from '../api/glide';
+import { createGlide, uploadImage } from '../api/glide';
 import { FirebaseError } from 'firebase/app';
+
+const defaultImage = () => ({
+  buffer: new ArrayBuffer(0),
+  name: '',
+  previewUrl: '',
+});
 
 const useMessenger = (answerTo?: string) => {
   const { isAuthenticated, user } = useAuthState()!;
   const { addSnackbar } = useUIDispatch();
-
+  const [image, setImage] = createSignal<UploadImage>(defaultImage());
   const [loading, setLoading] = createSignal(false);
   const [form, setForm] = createStore<MessengerForm>({
     content: '',
@@ -37,6 +43,10 @@ const useMessenger = (answerTo?: string) => {
     };
 
     try {
+      if (image().buffer.byteLength > 0) {
+        const downloadUrl = await uploadImage(image());
+      }
+
       const newGlide = await createGlide(glide, answerTo);
       newGlide.user = user;
 
@@ -58,6 +68,8 @@ const useMessenger = (answerTo?: string) => {
     handleSubmit,
     form,
     loading,
+    image,
+    setImage,
   };
 };
 

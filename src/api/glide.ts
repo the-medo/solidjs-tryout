@@ -21,6 +21,17 @@ import {
 import { db } from '../db';
 import { Glide, UserGlide } from '../types/Glide';
 import { User } from '../types/User';
+import { UploadImage } from '../types/Form';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+const uploadImage = async (image: UploadImage) => {
+  const storage = getStorage();
+  const storageRef = ref(storage, image.name);
+
+  const uploadResult = await uploadBytes(storageRef, image.buffer);
+  const downloadUrl = await getDownloadURL(uploadResult.ref);
+  return downloadUrl;
+};
 
 const getGlideById = async (id: string, uid: string) => {
   const userDocRef = doc(db, 'users', uid);
@@ -181,4 +192,4 @@ const createGlide = async (
   };
 };
 
-export { getGlides, getSubglides, createGlide, subscribeToGlides, getGlideById };
+export { getGlides, getSubglides, createGlide, subscribeToGlides, getGlideById, uploadImage };

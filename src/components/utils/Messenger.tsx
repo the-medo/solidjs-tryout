@@ -5,7 +5,6 @@ import { GFileEvent, GInputEvent } from '../../types/Form';
 import { Glide } from '../../types/Glide';
 import { Component, JSX, mergeProps, Show } from 'solid-js';
 import Button from './Button';
-import ChangeEventHandlerUnion = JSX.ChangeEventHandlerUnion;
 
 type Props = {
   onGlideAdded: (g?: Glide) => void;
@@ -17,7 +16,9 @@ const Messenger: Component<Props> = (initialProps) => {
   const props = mergeProps({ showAvatar: true }, initialProps);
 
   const { user } = useAuthState()!;
-  const { handleInput, handleSubmit, form, loading } = useMessenger(props.answerTo);
+  const { handleInput, handleSubmit, form, loading, image, setImage } = useMessenger(
+    props.answerTo,
+  );
 
   const sendDisabled = () => loading() || form.content === '';
 
@@ -29,7 +30,7 @@ const Messenger: Component<Props> = (initialProps) => {
     el.style.height = scrollHeight + 'px';
   };
 
-  const handleImageSelection: ChangeEventHandlerUnion<HTMLInputElement, Event> = (e) => {
+  const handleImageSelection = (e: GFileEvent) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -42,9 +43,13 @@ const Messenger: Component<Props> = (initialProps) => {
         const blob = new Blob([buffer8Uint], { type: file.type });
         const urlCreator = window.URL || window.webkitURL;
 
-        const imageUrl = urlCreator.createObjectURL(blob);
+        const previewUrl = urlCreator.createObjectURL(blob);
 
-        console.log(imageUrl);
+        setImage({
+          buffer,
+          name: file.name,
+          previewUrl,
+        });
       };
     }
   };
@@ -73,6 +78,11 @@ const Messenger: Component<Props> = (initialProps) => {
             placeholder={"What's new?"}
           />
         </div>
+        <Show when={image().previewUrl.length > 0}>
+          <div class="flex-it max-w-100 p-4">
+            <img src={image().previewUrl} alt="Preview image" />
+          </div>
+        </Show>
         <div class="flex-it mb-1 flex-row xs:justify-between items-center">
           <div class="flex-it mt-3 mr-3 cursor-pointer text-white hover:text-blue-400 transition">
             <div class="upload-btn-wrapper">

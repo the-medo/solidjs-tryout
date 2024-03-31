@@ -1,6 +1,12 @@
+export type UploadImage = {
+  buffer: ArrayBuffer;
+  name: string;
+  previewUrl: string;
+};
+
 export type GFileEvent = {
   target: Element & {
-    files?: FileList;
+    files: FileList | null;
   };
   currentTarget: HTMLInputElement;
 };
