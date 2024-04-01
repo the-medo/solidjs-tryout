@@ -37,23 +37,24 @@ const useMessenger = (answerTo?: string) => {
 
     setLoading(true);
 
-    const glide = {
+    const glideForm = {
       ...form,
       uid: user.uid,
     };
 
     try {
       if (image().buffer.byteLength > 0) {
-        const downloadUrl = await uploadImage(image());
+        glideForm.mediaUrl = await uploadImage(image());
       }
 
-      const newGlide = await createGlide(glide, answerTo);
+      const newGlide = await createGlide(glideForm, answerTo);
       newGlide.user = user;
 
       addSnackbar({ message: 'Glide added', type: 'success' });
       setForm({
         content: '',
       });
+      setImage(defaultImage());
       return newGlide;
     } catch (error) {
       const message = (error as FirebaseError).message;

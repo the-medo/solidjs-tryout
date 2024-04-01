@@ -1,7 +1,7 @@
 import { AiOutlineMessage } from 'solid-icons/ai';
 import { FaRegularHeart } from 'solid-icons/fa';
 import { FiTrash } from 'solid-icons/fi';
-import { Component } from 'solid-js';
+import { Component, Show } from 'solid-js';
 import { Glide } from '../../types/Glide';
 import { User } from '../../types/User';
 import { useNavigate } from '@solidjs/router';
@@ -16,6 +16,7 @@ const GlidePost: Component<Props> = (props) => {
 
   const glide = () => props.glide;
   const user = () => glide().user as User;
+  const hasMediaUrl = () => !!glide().mediaUrl;
 
   return (
     <div class="flex-it p-4 border-b-1 border-solid border-gray-700">
@@ -48,6 +49,11 @@ const GlidePost: Component<Props> = (props) => {
           <div class="flex-it flex-row flex-grow-0 items-center mb-2">
             <div class="flex-it mr-3 mb-3 w-full">{glide().content}</div>
           </div>
+          <Show when={hasMediaUrl()}>
+            <div class="flex-it max-w-100 pb-6">
+              <img src={glide().mediaUrl} alt="Image" />
+            </div>
+          </Show>
           <div class="flex-it flex-row flex-grow text-gray-400">
             <div class="flex-it flex-row items-center cursor-pointer mr-5 transition hover:text-blue-400">
               <AiOutlineMessage size={18} />
